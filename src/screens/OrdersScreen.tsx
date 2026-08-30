@@ -1,153 +1,100 @@
+import { FlatList, Image, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useOrders } from "@/hooks/useOrders";
+import { money } from "@/lib/format";
+import { Button, ErrorState, Loading } from "@/components/ui";
+import type { RootStackParamList } from "@/navigation";
 
-// import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
-// import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-// import { useOrders } from "@/hooks/useOrders";
-// import { statusColor, statusLabel } from "@/lib/orders";
-// import { money } from "@/lib/format";
-// import { Badge, ErrorState, Loading } from "@/components/ui";
-// import type { RootStackParamList } from "@/navigation";
-
-// type Props = NativeStackScreenProps<RootStackParamList, "Orders">;
-
-// export function OrdersScreen({ navigation }: Props) {
-//   const { data: orders, isLoading, isError, error, refetch, isFetching } = useOrders();
-
-//   if (isLoading) return <Loading label="Carregando histórico..." />;
-//   if (isError) {
-//     return <ErrorState message={(error as Error)?.message || "Erro ao carregar pedidos"} onRetry={() => refetch()} />;
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <FlatList
-//         data={orders ?? []}
-//         keyExtractor={(item) => item.id}
-//         contentContainerStyle={styles.list}
-//         refreshControl={<RefreshControl refreshing={isFetching && !isLoading} onRefresh={() => refetch()} tintColor="#38bdf8" />}
-//         ListEmptyComponent={<Text style={styles.empty}>Você ainda não realizou nenhum pedido.</Text>}
-//         renderItem={({ item }) => (
-//           <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed]} onPress={() => navigation.navigate("Order", { id: item.id })}>
-//             <View style={styles.row}>
-//               <Text style={styles.id}>Pedido #{item.id.slice(-6)}</Text>
-//               <Badge label={statusLabel ? statusLabel(item.status) : item.status} color={statusColor ? statusColor(item.status) : "#38bdf8"} />
-//             </View>
-//             <Text style={styles.sub}>
-//               {item.items?.length ?? 0} {item.items?.length === 1 ? "item" : "itens"}
-//             </Text>
-//             <Text style={styles.total}>{money(item.total)}</Text>
-//           </Pressable>
-//         )}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, backgroundColor: "#0f172a" },
-//   list: { padding: 12, gap: 10 },
-//   card: { backgroundColor: "#1e293b", padding: 14, borderRadius: 8, gap: 6 },
-//   cardPressed: { opacity: 0.8 },
-//   row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-//   id: { color: "#f8fafc", fontWeight: "700", fontSize: 15 },
-//   sub: { color: "#94a3b8", fontSize: 13 },
-//   total: { color: "#38bdf8", fontWeight: "700", fontSize: 16, marginTop: 4 },
-//   empty: { textAlign: "center", color: "#94a3b8", marginTop: 40, fontSize: 14 },
-// });
-
-import { useLayoutEffect } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useOrders } from '@/hooks/useOrders';
-import { statusColor, statusLabel } from '@/lib/orders';
-import { money } from '@/lib/format';
-import { Badge, Button, ErrorState, Loading } from '@/components/ui';
-import type { RootStackParamList } from '@/navigation';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'Orders'>;
+type Props = NativeStackScreenProps<RootStackParamList, "Orders">;
 
 export function OrdersScreen({ navigation }: Props) {
   const { data: orders, isLoading, isError, error, refetch, isFetching } = useOrders();
 
-  const handleGoHome = () => {
-    // Volta para a tela inicial limpando o histórico do checkout
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Products' }],
-    });
-  };
-
-  // Adiciona o botão de acionamento rápido no cabeçalho do App
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Pressable onPress={handleGoHome} hitSlop={8}>
-          <Text style={styles.headerButton}>Início</Text>
-        </Pressable>
-      ),
-    });
-  }, [navigation]);
-
-  if (isLoading) return <Loading label="Carregando histórico..." />;
-  if (isError) {
-    return (
-      <ErrorState
-        message={(error as Error)?.message || 'Erro ao carregar pedidos'}
-        onRetry={() => refetch()}
-      />
-    );
-  }
+  if (isLoading) return <Loading label="Carregando seus pedidos..." />;
+  if (isError) return <ErrorState message={(error as any)?.message ?? "Erro ao carregar pedidos"} onRetry={() => refetch()} />;
 
   return (
     <View style={styles.container}>
+      {/* Cabeçalho com o botão de retorno */}
+      <View style={styles.topHeader}>
+        <Text style={styles.headerTitle}>Meus Pedidos</Text>
+        <Button
+          label="Início"
+          variant="ghost"
+          onPress={() => navigation.navigate("Products")}
+        />
+      </View>
+
       <FlatList
         data={orders ?? []}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(order, index) => order?.id || String(index)}
         contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={() => refetch()}
-            tintColor="#38bdf8"
-          />
+        refreshControl={<RefreshControl refreshing={Boolean(isFetching && !isLoading)} onRefresh={() => refetch()} tintColor="#dc2626" />}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.empty}>Você ainda não realizou nenhum pedido.</Text>
+            <Button
+              label="Explorar Produtos"
+              onPress={() => navigation.navigate("Products")}
+            />
+          </View>
         }
-        ListEmptyComponent={<Text style={styles.empty}>Você ainda não realizou nenhum pedido.</Text>}
-        renderItem={({ item }) => (
+        renderItem={({ item: order }) => (
           <Pressable
-            style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-            onPress={() => navigation.navigate('Order', { id: item.id })}
+            style={styles.orderCard}
+            onPress={() => navigation.navigate("Order", { id: order.id })}
           >
-            <View style={styles.row}>
-              <Text style={styles.id}>Pedido #{item.id.slice(-6)}</Text>
-              <Badge
-                label={statusLabel ? statusLabel(item.status) : item.status}
-                color={statusColor ? statusColor(item.status) : '#38bdf8'}
-              />
+            <View style={styles.orderHeader}>
+              <Text style={styles.orderId}>Pedido #{order.id?.slice(-6) || order.id}</Text>
+              <Text style={styles.orderTotal}>{money(order.total ?? order.amount ?? 0)}</Text>
             </View>
-            <Text style={styles.sub}>
-              {item.items?.length ?? 0} {item.items?.length === 1 ? 'item' : 'itens'}
-            </Text>
-            <Text style={styles.total}>{money(item.total)}</Text>
+
+            {order.items?.map((item: any, idx: number) => (
+              <View key={item.variantId || item.id || String(idx)} style={styles.itemRow}>
+                {item.image ? (
+                  <Image source={{ uri: item.image }} style={styles.thumb} />
+                ) : (
+                  <View style={[styles.thumb, styles.thumbEmpty]} />
+                )}
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName} numberOfLines={2}>
+                    {item.productName}
+                  </Text>
+                  <Text style={styles.itemMeta}>
+                    Qtd: {item.quantity} × {money(item.price)}
+                  </Text>
+                </View>
+              </View>
+            ))}
           </Pressable>
         )}
       />
-
-      <View style={styles.footer}>
-        <Button label="Voltar a home" onPress={handleGoHome} />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f172a' },
-  list: { padding: 12, gap: 10 },
-  card: { backgroundColor: '#1e293b', padding: 14, borderRadius: 8, gap: 6 },
-  cardPressed: { opacity: 0.8 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  id: { color: '#f8fafc', fontWeight: '700', fontSize: 15 },
-  sub: { color: '#94a3b8', fontSize: 13 },
-  total: { color: '#38bdf8', fontWeight: '700', fontSize: 16, marginTop: 4 },
-  empty: { textAlign: 'center', color: '#94a3b8', marginTop: 40, fontSize: 14 },
-  headerButton: { color: '#38bdf8', fontWeight: '600', fontSize: 16, marginRight: 8 },
-  footer: { padding: 16, borderTopWidth: 1, borderTopColor: '#334155' },
+  container: { flex: 1, backgroundColor: "#0f172a" },
+  topHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  headerTitle: { fontSize: 20, fontWeight: "700", color: "#f8fafc" },
+  list: { padding: 12, gap: 12 },
+  orderCard: { backgroundColor: "#1e293b", borderRadius: 8, padding: 12, gap: 12 },
+  orderHeader: { flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#334155", paddingBottom: 8 },
+  orderId: { fontSize: 14, fontWeight: "700", color: "#f8fafc" },
+  orderTotal: { fontSize: 14, fontWeight: "700", color: "#ef4444" },
+  itemRow: { flexDirection: "row", gap: 12, alignItems: "center" },
+  thumb: { width: 48, height: 48, borderRadius: 6, backgroundColor: "#334155" },
+  thumbEmpty: { backgroundColor: "#334155" },
+  itemDetails: { flex: 1 },
+  itemName: { fontSize: 13, fontWeight: "600", color: "#f8fafc" },
+  itemMeta: { fontSize: 12, color: "#94a3b8", marginTop: 2 },
+  emptyContainer: { alignItems: "center", gap: 16, marginTop: 40 },
+  empty: { textAlign: "center", color: "#94a3b8" },
 });
