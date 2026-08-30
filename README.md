@@ -19,6 +19,10 @@
 Foi utilizado inteligência artificial em diversas vezes para resolver bugs e constantes erros nos arquivos. A IA auxiliou nos services, corrigiu o storage, ajudou a fazer os hooks, corrijir libs e diversos erros nas screens.
 ---
 
+## Credenciais de teste
+-Usúario: gu@gmail.com
+-Senah: 123456
+
 ### 🚀 Pré-requisitos para rodar o projeto
 - Node.js (v18 ou superior)
 - Expo CLI
