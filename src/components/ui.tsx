@@ -1,12 +1,112 @@
-/** Componentes de UI mínimos e reutilizados pelas telas. Nada de framework. */
+// /** Componentes de UI mínimos e reutilizados pelas telas. Nada de framework. */
+// import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
+
+// /** Campo de texto padronizado (usado nas telas de login/cadastro). */
+// export function TextField(props: TextInputProps) {
+//   return <TextInput placeholderTextColor="#9ca3af" style={styles.input} {...props} />;
+// }
+
+// /** Etiqueta colorida — usada para o status do pedido. */
+// export function Badge({ label, color }: { label: string; color: string }) {
+//   return (
+//     <View style={[styles.badge, { borderColor: color }]}>
+//       <Text style={[styles.badgeText, { color }]}>{label}</Text>
+//     </View>
+//   );
+// }
+
+// export function Center({ children }: { children: React.ReactNode }) {
+//   return <View style={styles.center}>{children}</View>;
+// }
+
+// export function Loading({ label = 'Carregando…' }: { label?: string }) {
+//   return (
+//     <Center>
+//       <ActivityIndicator size="large" />
+//       <Text style={styles.muted}>{label}</Text>
+//     </Center>
+//   );
+// }
+
+// /** Estado de erro com botão de tentar de novo (ex.: refetch de uma query). */
+// export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
+//   return (
+//     <Center>
+//       <Text style={styles.errorTitle}>Algo deu errado</Text>
+//       <Text style={styles.muted}>{message}</Text>
+//       {onRetry && (
+//         <Button label="Tentar de novo" onPress={onRetry} />
+//       )}
+//     </Center>
+//   );
+// }
+
+// export function Button({
+//   label,
+//   onPress,
+//   disabled,
+//   variant = 'primary',
+// }: {
+//   label: string;
+//   onPress: () => void;
+//   disabled?: boolean;
+//   variant?: 'primary' | 'ghost';
+// }) {
+//   return (
+//     <Pressable
+//       onPress={onPress}
+//       disabled={disabled}
+//       style={({ pressed }) => [
+//         styles.btn,
+//         variant === 'ghost' && styles.btnGhost,
+//         (disabled || pressed) && styles.btnDim,
+//       ]}
+//     >
+//       <Text style={[styles.btnText, variant === 'ghost' && styles.btnTextGhost]}>{label}</Text>
+//     </Pressable>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 8 },
+//   muted: { color: '#6b7280', textAlign: 'center' },
+//   errorTitle: { fontSize: 16, fontWeight: '700', color: '#b91c1c' },
+//   btn: {
+//     backgroundColor: '#111827',
+//     paddingVertical: 12,
+//     paddingHorizontal: 16,
+//     borderRadius: 10,
+//     alignItems: 'center',
+//   },
+//   btnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#d1d5db' },
+//   btnDim: { opacity: 0.55 },
+//   btnText: { color: '#fff', fontWeight: '700' },
+//   btnTextGhost: { color: '#111827' },
+//   input: {
+//     borderWidth: 1,
+//     borderColor: '#d1d5db',
+//     borderRadius: 10,
+//     paddingHorizontal: 12,
+//     paddingVertical: 12,
+//     fontSize: 15,
+//     color: '#111827',
+//   },
+//   badge: {
+//     alignSelf: 'flex-start',
+//     borderWidth: 1,
+//     borderRadius: 999,
+//     paddingHorizontal: 10,
+//     paddingVertical: 3,
+//   },
+//   badgeText: { fontSize: 12, fontWeight: '700' },
+// });
+
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
-/** Campo de texto padronizado (usado nas telas de login/cadastro). */
 export function TextField(props: TextInputProps) {
-  return <TextInput placeholderTextColor="#9ca3af" style={styles.input} {...props} />;
+  return <TextInput placeholderTextColor="#6b7280" style={styles.input} {...props} />;
 }
 
-/** Etiqueta colorida — usada para o status do pedido. */
 export function Badge({ label, color }: { label: string; color: string }) {
   return (
     <View style={[styles.badge, { borderColor: color }]}>
@@ -19,24 +119,21 @@ export function Center({ children }: { children: React.ReactNode }) {
   return <View style={styles.center}>{children}</View>;
 }
 
-export function Loading({ label = 'Carregando…' }: { label?: string }) {
+export function Loading({ label = 'Carregando...' }: { label?: string }) {
   return (
     <Center>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" color="#dc2626" />
       <Text style={styles.muted}>{label}</Text>
     </Center>
   );
 }
 
-/** Estado de erro com botão de tentar de novo (ex.: refetch de uma query). */
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <Center>
-      <Text style={styles.errorTitle}>Algo deu errado</Text>
+      <Text style={styles.errorTitle}>Ocorreu uma falha</Text>
       <Text style={styles.muted}>{message}</Text>
-      {onRetry && (
-        <Button label="Tentar de novo" onPress={onRetry} />
-      )}
+      {onRetry && <Button label="Tentar novamente" onPress={onRetry} />}
     </Center>
   );
 }
@@ -68,35 +165,36 @@ export function Button({
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 8 },
-  muted: { color: '#6b7280', textAlign: 'center' },
-  errorTitle: { fontSize: 16, fontWeight: '700', color: '#b91c1c' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 8, backgroundColor: '#0f172a' },
+  muted: { color: '#94a3b8', textAlign: 'center' },
+  errorTitle: { fontSize: 16, fontWeight: '700', color: '#ef4444' },
   btn: {
-    backgroundColor: '#111827',
+    backgroundColor: '#dc2626',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: 'center',
   },
-  btnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#d1d5db' },
-  btnDim: { opacity: 0.55 },
-  btnText: { color: '#fff', fontWeight: '700' },
-  btnTextGhost: { color: '#111827' },
+  btnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#334155' },
+  btnDim: { opacity: 0.5 },
+  btnText: { color: '#ffffff', fontWeight: '700' },
+  btnTextGhost: { color: '#f8fafc' },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
+    borderColor: '#334155',
+    backgroundColor: '#1e293b',
+    borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#111827',
+    color: '#f8fafc',
   },
   badge: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  badgeText: { fontSize: 12, fontWeight: '700' },
+  badgeText: { fontSize: 11, fontWeight: '700' },
 });
