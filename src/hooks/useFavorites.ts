@@ -60,7 +60,7 @@ export function useFavorites() {
                 variantLabel: variant?.label ?? variant?.sku ?? variantLabel,
               };
             } catch {
-              // Em caso de erro na requisição do produto, mantém os dados extraídos do favorito
+            
             }
           }
 

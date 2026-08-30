@@ -4,7 +4,7 @@
  */
 export const env = {
   apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "https://api.mockmerce.com.br",
-
+  apiKey: process.env.EXPO_PUBLIC_API_KEY ?? "",
   studentRm: process.env.EXPO_PUBLIC_STUDENT_RM ?? "rm562267",
 };
 

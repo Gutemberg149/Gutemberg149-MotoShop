@@ -15,7 +15,7 @@ export function useCheckout() {
   return useMutation({
     mutationFn: checkout,
     onSuccess: () => {
-      // O carrinho virou pedido: ele esvaziou no servidor, e há um pedido novo.
+ 
       queryClient.invalidateQueries({ queryKey: queryKeys.cart.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
     },
@@ -28,7 +28,7 @@ export function usePayOrder() {
     mutationFn: (v: { id: string; method: PaymentMethod; simulate: 'approve' | 'decline' }) =>
       payOrder(v.id, v.method, v.simulate),
     onSuccess: (order: Order) => {
-      // Já temos o pedido atualizado na resposta: escreve direto no cache do detalhe.
+   
       queryClient.setQueryData(queryKeys.orders.detail(order.id), order);
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.list() });
       queryClient.invalidateQueries({ queryKey: queryKeys.orders.timeline(order.id) });
